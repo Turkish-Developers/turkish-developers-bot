@@ -22,7 +22,9 @@ class Poll(commands.Cog):
 	    print('hello!')
     
     @commands.command()
+    @commands.has_role("Admin")
     async def createpoll(self, ctx, *, arg):
+        await ctx.message.delete()
         import discord
         arguments = list(map(lambda a: a.strip(), arg.split(',')))
         print(arguments)
