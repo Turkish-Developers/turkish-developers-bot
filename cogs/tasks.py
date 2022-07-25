@@ -28,24 +28,26 @@ class TimerTask(commands.Cog):
             "Üzülme, işsiz kaldıysan en kötü Front-end geliştirici olursun."
             ]
 
-    @tasks.loop(hours=24)
+    @tasks.loop(minutes=60)
     async def send_random_link(self):
         await self.bot.wait_until_ready()
-        feed = feedparser.parse(self.feed_url)
-        counter = 0
-        while True:
-            random_entry_link = choice(feed.entries).link
-            if not PdmManager.is_link_in_db(random_entry_link):
-                PdmManager.add_sended_link(random_entry_link)
-                channel = self.bot.get_channel(self.channel_id)
-                allowed_mentions = discord.AllowedMentions(everyone = True)
-                await channel.send(content = f"Selam @everyone! Bugünün öneri makalesini gönderiyorum. Okumanızı tavsiye ederim! {random_entry_link}", allowed_mentions = allowed_mentions)
-                break
-            else:
-                counter += 1
+        now_hour = dt.now().hour
+        if now_hour == 10:
+            feed = feedparser.parse(self.feed_url)
+            counter = 0
+            while True:
+                random_entry_link = choice(feed.entries).link
+                if not PdmManager.is_link_in_db(random_entry_link):
+                    PdmManager.add_sended_link(random_entry_link)
+                    channel = self.bot.get_channel(self.channel_id)
+                    allowed_mentions = discord.AllowedMentions(everyone = True)
+                    await channel.send(content = f"Selam @everyone! Bugünün öneri makalesini gönderiyorum. Okumanızı tavsiye ederim! {random_entry_link}", allowed_mentions = allowed_mentions)
+                    break
+                else:
+                    counter += 1
 
-            if counter >= 5:
-                break      
+                if counter >= 5:
+                    break      
 
     
     @tasks.loop(minutes=60.0)
