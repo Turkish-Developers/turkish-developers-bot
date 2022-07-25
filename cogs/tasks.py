@@ -39,7 +39,7 @@ class TimerTask(commands.Cog):
                 PdmManager.add_sended_link(random_entry_link)
                 channel = self.bot.get_channel(self.channel_id)
                 allowed_mentions = discord.AllowedMentions(everyone = True)
-                await channel.send(content = f"selam @everyone! {random_entry_link}", allowed_mentions = allowed_mentions)
+                await channel.send(content = f"Selam @everyone! Bugünün öneri makalesini gönderiyorum. Okumanızı tavsiye ederim! {random_entry_link}", allowed_mentions = allowed_mentions)
                 break
             else:
                 counter += 1
