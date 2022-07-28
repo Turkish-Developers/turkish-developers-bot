@@ -8,7 +8,10 @@ cp.read('config.ini')
 
 TOKEN = cp['SETTINGS']['TOKEN']
 
-client = commands.Bot(command_prefix = "!tdb ")
+intents = discord.Intents().all()
+intents.members = True
+
+client = commands.Bot(command_prefix = "!tdb ", intents=intents)
 
 for f in os.listdir("./cogs"):
 	if f.endswith(".py"):
