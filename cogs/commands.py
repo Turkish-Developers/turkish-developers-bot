@@ -66,7 +66,7 @@ class Streamer(commands.Cog):
         self.bot = bot
 
     @commands.command()
-    @commands.has_role("İlgili")
+    @commands.has_role("Yayıncı")
     async def stream(self, ctx, *, arg):
         await ctx.message.delete()
         arguments = list(map(lambda a: a.strip(), arg.split(',')))
@@ -77,7 +77,7 @@ class Streamer(commands.Cog):
             embed = discord.Embed(title=f"{header}", description=f"Merhaba @everyone! Ben {ctx.message.author.mention}. Şu an canlı yayındayım!\n", color=discord.Color.blue())
             embed.add_field(name="Hemen katıl:", value=f"{self.bot.get_channel(int(channel)).mention}", inline=True)
             PdmManager.add_sended_key(str(ctx.message.author.id), 'streamed_users')
-            await ctx.send(embed=embed, allowed_mentions=allowed_mentions)
+            await ctx.send(f"@everyone",embed=embed, allowed_mentions=allowed_mentions)
 
 class DP(commands.Cog):
     def __init__(self, bot):
