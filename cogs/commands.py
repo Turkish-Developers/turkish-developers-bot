@@ -86,12 +86,12 @@ class DP(commands.Cog):
 
     @commands.Cog.listener()
     async def on_reaction_add(self, reaction, dc_user:discord.Member):
-        if reaction.message.author.id == dc_user.id:
-            await reaction.remove(dc_user)
-            await reaction.message.channel.send(f"{dc_user.mention}, kendine teşekkür etmeye çalışmak güzel bir şey tabi. fakat bunun için DP kazanamazsın. 😛")
-            return
-
         if reaction.emoji in ['🙏', '🙏🏻', '🙏🏿', '🙏🏽']:
+            if reaction.message.author.id == dc_user.id:
+                await reaction.remove(dc_user)
+                await reaction.message.channel.send(f"{dc_user.mention}, kendine teşekkür etmeye çalışmak güzel bir şey tabi. fakat bunun için DP kazanamazsın. 😛")
+                return
+
             other_user_id = reaction.message.author.id
             user = UserView(dc_user.id)
             is_success, other_user = user.increase_user_developer_point(other_user_id)
