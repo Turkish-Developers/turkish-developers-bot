@@ -91,6 +91,7 @@ class TimerTask(commands.Cog):
 
         if now_hour == 11:
             PdmManager.clear_key_in_db('interested_users')
+            PdmManager.clear_key_in_db('streamed_users')
 
     def embed_message(self, title, description):
         return discord.Embed(title=f"{title}", description=f"{description}", color=discord.Color.green())
