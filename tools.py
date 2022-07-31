@@ -4,7 +4,7 @@ class Article:
         import feedparser
         feed = feedparser.parse(article_link)
 
-        first_article = feed.entries[1]
+        first_article = feed.entries[0]
         link, title, summary = first_article.link, first_article.title, first_article.summary
 
         return link,title,summary
