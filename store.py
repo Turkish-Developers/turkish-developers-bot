@@ -21,6 +21,20 @@ class PdmManager:
         return item in items.split(',')
 
     @staticmethod
+    def get_key_value(item, key):
+        with dbm.open('general', 'c') as db:
+            item = str(db[key].decode("utf-8"))
+
+        return item
+
+    @staticmethod
+    def set_key_value(item, key):
+        with dbm.open('general', 'c') as db:
+            db[key] = item
+
+        return item
+
+    @staticmethod
     def show_detail(key):
         with dbm.open('general', 'c') as db:
             return str(db[key].decode("utf-8"))

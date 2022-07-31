@@ -82,6 +82,7 @@ class Streamer(commands.Cog):
 class DP(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
+        self.clear_dp.start()
     
 
     @commands.Cog.listener()
@@ -112,7 +113,7 @@ class DP(commands.Cog):
         if is_success:
             await ctx.send(f"{ctx.message.author.mention}, {dc_user.mention} kullanıcısına **teşekkür etti **👏! {dc_user.mention} artık **{other_user.get_user_developer_point()}** DP(Developer Point) sahibi! 😎")
         else:
-            await ctx.send(f"{ctx.message.author.mention}, maalesef teşekkür etme hakkın dolmuş 😐 Her gün 1 kere hak kazandığını unutma 🤚")
+            await ctx.send(f"{ctx.message.author.mention}, maalesef teşekkür etme hakkın dolmuş 😐 Her gün 1 kere hak kazandığını unutma 🤚 Bu hakkı sabah 9 - 10 arası keyfime göre rastgele otomatik yeniliyorum.")
 
 
 
@@ -173,10 +174,10 @@ class DP(commands.Cog):
     
     @tasks.loop(minutes=60)
     async def clear_dp(self):
-        from datetime import dt
+        from datetime import datetime
         await self.bot.wait_until_ready()
-        now_hour = dt.now().hour
-        if now_hour == 11:
+        now_hour = datetime.now().hour
+        if now_hour == 9:
             UserView.restore_all_gave_dp()
 
 

@@ -4,19 +4,29 @@ import random
 import feedparser
 import discord
 from store import PdmManager
+from tools import Article
 
 
 class TimerTask(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
+
         self.turkish_developers_id = 643739727849062400
         self.channel_id = 984467894605848677
+        self.python_channel_id = 996853962919661568
+        self.python_role_id = 772894720790888458
+
+        self.frontend_channel_id = 996825047853432863
+        self.frontend_role_id = 794649516447236096
+
         self.feed_url = 'https://medium.com/feed/better-programming'
         
 
         self.ask_people_today.start()
         self.send_random_link.start()
         self.ask_to_interested_user.start()
+        self.python_article.start()
+        self.css_article.start()
 
 
         self.questions = [
@@ -38,7 +48,7 @@ class TimerTask(commands.Cog):
     async def send_random_link(self):
         await self.bot.wait_until_ready()
         now_hour = dt.now().hour
-        if now_hour == 10:
+        if now_hour == 9:
             feed = feedparser.parse(self.feed_url)
             counter = 0
             while True:
@@ -87,11 +97,65 @@ class TimerTask(commands.Cog):
             random_user = random.choice(users)
             if not PdmManager.is_key_in_db(str(random_user.id), 'interested_users'):
                 PdmManager.add_sended_key(str(random_user.id), 'interested_users')
-                await channel.send(embed=self.embed_message("", f"{random_user.mention}, bugün bize bilmediğimizi düşündüğün bir Yazılım & Programlama bilgisi verebilir misin?"))
+                await channel.send(content=f"{random_user.mention}", embed=self.embed_message("", f"{random_user.mention}, Naber? Neler yapıyorsun?"))
 
-        if now_hour == 11:
+        if now_hour == 23:
             PdmManager.clear_key_in_db('interested_users')
             PdmManager.clear_key_in_db('streamed_users')
+
+
+    @tasks.loop(minutes=60.0)
+    async def python_article(self):
+        await self.bot.wait_until_ready()
+        now_hour = dt.now().hour
+        if now_hour == 8:
+            article_data = self.send_article(
+                channel_id=self.python_channel_id,
+                rss_link="https://realpython.com/atom.xml",
+                store_key='python_article',
+                role_id=self.python_role_id
+            )
+            
+            if article_data:
+                channel = article_data.get('channel')
+                article_data.pop('channel')
+                await channel.send(**article_data.get('data'))
+
+    @tasks.loop(minutes=60.0)
+    async def css_article(self):
+        await self.bot.wait_until_ready()
+        now_hour = dt.now().hour
+        if now_hour == 8:
+            article_data = self.send_article(
+                channel_id=self.frontend_channel_id,
+                rss_link="https://css-tricks.com/feed/",
+                store_key='css-article',
+                role_id=self.frontend_role_id
+            )
+            
+            if article_data:
+                channel = article_data.get('channel')
+                article_data.pop('channel')
+                await channel.send(**article_data.get('data'))
+
+
+    def send_article(self, channel_id, rss_link, store_key, role_id):
+        channel = self.bot.get_channel(channel_id)
+        link,title,summary = Article.get_article(rss_link)
+
+        if 'podcast' in link:
+            return False
+
+        allowed_mentions = discord.AllowedMentions(everyone = True)
+
+        if not PdmManager.is_key_in_db(str(link), store_key):
+            PdmManager.set_key_value(str(link), store_key)
+        else:
+            if PdmManager.get_key_value(link, store_key) == link:
+                return False
+
+        return {"channel": channel, "data": {"content": f"Merhaba <@&{role_id}>, size yeni çıkan bir makale öneriyorum: {link}", "allowed_mentions": allowed_mentions}}
+
 
     def embed_message(self, title, description):
         return discord.Embed(title=f"{title}", description=f"{description}", color=discord.Color.green())
