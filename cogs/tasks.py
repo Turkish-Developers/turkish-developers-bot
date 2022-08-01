@@ -4,7 +4,7 @@ import random
 import feedparser
 import discord
 from store import PdmManager
-from tools import Article
+from tools import Article, Reddit
 
 
 class TimerTask(commands.Cog):
@@ -19,10 +19,12 @@ class TimerTask(commands.Cog):
         self.frontend_channel_id = 996825047853432863
         self.frontend_role_id = 794649516447236096
 
-        self.feed_url = 'https://medium.com/feed/better-programming'
+        self.feed_urls = ['https://medium.com/feed/better-programming',
+        'https://stackoverflow.blog/newsletter/feed/']
         
 
         self.ask_people_today.start()
+        self.send_reddit_humor.start()
         self.send_random_link.start()
         self.ask_to_interested_user.start()
         self.python_article.start()
@@ -47,9 +49,10 @@ class TimerTask(commands.Cog):
     @tasks.loop(minutes=60)
     async def send_random_link(self):
         await self.bot.wait_until_ready()
+        import random
         now_hour = dt.now().hour
-        if now_hour == 9:
-            feed = feedparser.parse(self.feed_url)
+        if now_hour == 11:
+            feed = feedparser.parse(random.choice(self.feed_urls))
             counter = 0
             while True:
                 random_entry_link = random.choice(feed.entries).link
@@ -57,13 +60,33 @@ class TimerTask(commands.Cog):
                     PdmManager.add_sended_key(random_entry_link, 'link')
                     channel = self.bot.get_channel(self.channel_id)
                     allowed_mentions = discord.AllowedMentions(everyone = True)
-                    await channel.send(content = f"Selam @everyone! Bugünün öneri makalesini gönderiyorum. Okumanızı tavsiye ederim! {random_entry_link}", allowed_mentions = allowed_mentions)
+                    await channel.send(content = f"Günaydın @everyone! Bugünün öneri makalesini gönderiyorum. Okumanızı tavsiye ederim! {random_entry_link}", allowed_mentions = allowed_mentions)
                     break
                 else:
                     counter += 1
 
                 if counter >= 5:
                     break      
+
+
+    @tasks.loop(hours=2)
+    async def send_reddit_humor(self):
+        await self.bot.wait_until_ready()
+        title, link = Reddit.get_last_image_on_subreddit()
+        channel = self.bot.get_channel(self.channel_id)
+
+
+
+        if not PdmManager.is_key_in_db(str(link), 'reddit_humor'):
+            PdmManager.set_key_value(str(link), 'reddit_humor')
+        else:
+            if PdmManager.get_key_value(link, 'reddit_humor') == link:
+                return False
+
+        e = discord.Embed(title=title)
+        e.set_image(url=link)
+
+        await channel.send(embed=e)
 
     
     @tasks.loop(minutes=60.0)
@@ -98,7 +121,7 @@ class TimerTask(commands.Cog):
             if not PdmManager.is_key_in_db(str(random_user.id), 'interested_users'):
                 PdmManager.add_sended_key(str(random_user.id), 'interested_users')
                 await channel.send(content=f"{random_user.mention}", embed=self.embed_message("", f"{random_user.mention}, Naber? Neler yapıyorsun?"))
-
+            
         if now_hour == 23:
             PdmManager.clear_key_in_db('interested_users')
             PdmManager.clear_key_in_db('streamed_users')
