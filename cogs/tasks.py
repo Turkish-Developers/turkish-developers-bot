@@ -25,6 +25,7 @@ class TimerTask(commands.Cog):
 
         self.ask_people_today.start()
         self.send_reddit_humor.start()
+        self.update_status.start()
         self.send_random_link.start()
         self.ask_to_interested_user.start()
         self.python_article.start()
@@ -68,6 +69,18 @@ class TimerTask(commands.Cog):
                 if counter >= 5:
                     break      
 
+    @tasks.loop(seconds=5)
+    async def update_status(self):
+        await self.bot.wait_until_ready()
+        import random
+        activity_list = [
+        '!tdb showcommands', 
+        'Toplam: ' + str(len(self.bot.get_guild(self.turkish_developers_id).members)) + " TD ❤️"
+        ]
+
+
+        activity = discord.Activity(type=discord.ActivityType.listening, name=random.choice(activity_list))
+        await self.bot.change_presence(activity=activity)
 
     @tasks.loop(hours=2)
     async def send_reddit_humor(self):
