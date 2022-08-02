@@ -5,6 +5,7 @@ import feedparser
 import discord
 from store import PdmManager
 from tools import Article, Reddit
+from views import QuestionView
 
 
 class TimerTask(commands.Cog):
@@ -28,6 +29,7 @@ class TimerTask(commands.Cog):
         self.update_status.start()
         self.send_random_link.start()
         self.ask_to_interested_user.start()
+        self.get_random_question.start()
         self.python_article.start()
         self.css_article.start()
 
@@ -81,6 +83,30 @@ class TimerTask(commands.Cog):
 
         activity = discord.Activity(type=discord.ActivityType.listening, name=random.choice(activity_list))
         await self.bot.change_presence(activity=activity)
+
+
+
+
+    @tasks.loop(hours=1)
+    async def get_random_question(self):
+        await self.bot.wait_until_ready()
+        import random
+
+        if random.randint(1, 10) == 5:
+            question_text, question_id = QuestionView.get_random_question()
+            if question_id:
+                channel = self.bot.get_channel(self.channel_id)
+                message = await channel.send('**Rastgele Bir Soru gizemli bir şekilde Ortaya ÇIKTI 😱! İlk Çözen ol ve DP Kazan 😎**\n\n' +question_text.replace('<code>', '**'))
+                await message.add_reaction('🇦')
+                await message.add_reaction('🇧')
+                await message.add_reaction('🇨')
+                await message.add_reaction('🇩')
+
+
+                PdmManager.set_key_value(str(message.id), 'question')
+                PdmManager.set_key_value(str(question_id), 'question_id')
+
+        
 
     @tasks.loop(hours=2)
     async def send_reddit_humor(self):

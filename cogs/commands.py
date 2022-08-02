@@ -87,6 +87,7 @@ class DP(commands.Cog):
 
     @commands.Cog.listener()
     async def on_reaction_add(self, reaction, dc_user:discord.Member):
+        question_reacts = {'🇦': 'A','🇧' :'B', '🇨' :'C', '🇩': 'D'}
         if reaction.emoji in ['🙏', '🙏🏻', '🙏🏿', '🙏🏽']:
             if reaction.message.author.id == dc_user.id:
                 await reaction.remove(dc_user)
@@ -102,6 +103,21 @@ class DP(commands.Cog):
             else:
                 await reaction.remove(dc_user)
                 await reaction.message.channel.send(f"{dc_user.mention}, maalesef teşekkür etme hakkın dolmuş 😐 Her gün 1 kere hak kazandığını unutma 🤚")
+
+
+        if reaction.emoji in question_reacts.keys() and not reaction.message.author.id == dc_user.id:
+            await reaction.remove(dc_user)
+            message_id = int(PdmManager.get_key_value('question', 'question'))
+            question_id = int(PdmManager.get_key_value('question_id', 'question_id'))
+            if message_id == reaction.message.id and question_id:
+                status = QuestionView.check_question_answer(question_id, question_reacts.get(reaction.emoji), dc_user.id)
+                if status == 'exit':
+                    await reaction.message.channel.send(f"{dc_user.mention}, #{question_id} soruyu doğru bildi ve 1 DP Kazandı 👏!")
+                else:
+                    await dc_user.send(f'{status} 😐')
+                    
+
+
 
 
     @commands.command()
@@ -170,6 +186,7 @@ class DP(commands.Cog):
         print(description)
         embed = discord.Embed(title = "👑 DP(Developer Point) Sıralaması", description=description, color = 3553599)
         await ctx.send(embed=embed)
+        
 
     
     @tasks.loop(minutes=60)
@@ -180,7 +197,23 @@ class DP(commands.Cog):
         if now_hour == 9:
             UserView.restore_all_gave_dp()
 
+class Question(commands.Cog):
+    def __init__(self, bot):
+        self.bot = bot
 
+    @commands.command()
+    @commands.has_role("Devops")
+    async def add_question(self, ctx, *, arg):
+        question = QuestionView()
+        status = question.save(arg)
+        if status:
+            await ctx.send('Başarılı')
+        else:
+            await ctx.send('Başarısız')
+
+
+            
+  
         
 
 
@@ -189,3 +222,4 @@ def setup(client):
 	client.add_cog(Poll(client))
 	client.add_cog(Streamer(client))
 	client.add_cog(DP(client))
+	client.add_cog(Question(client))
