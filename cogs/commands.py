@@ -202,7 +202,7 @@ class Question(commands.Cog):
         self.bot = bot
 
     @commands.command()
-    @commands.has_role("Devops")
+    @commands.has_role("Admin")
     async def add_question(self, ctx, *, arg):
         question = QuestionView()
         status = question.save(arg)
