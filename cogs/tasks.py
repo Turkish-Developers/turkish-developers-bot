@@ -54,7 +54,7 @@ class TimerTask(commands.Cog):
         await self.bot.wait_until_ready()
         import random
         now_hour = dt.now().hour
-        if now_hour == 11:
+        if now_hour == 9:
             feed = feedparser.parse(random.choice(self.feed_urls))
             counter = 0
             while True:
@@ -164,6 +164,7 @@ class TimerTask(commands.Cog):
         if now_hour == 23:
             PdmManager.clear_key_in_db('interested_users')
             PdmManager.clear_key_in_db('streamed_users')
+            PdmManager.clear_key_in_db('suggested_users')
 
 
     @tasks.loop(minutes=60.0)

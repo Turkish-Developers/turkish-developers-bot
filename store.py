@@ -23,6 +23,8 @@ class PdmManager:
     @staticmethod
     def get_key_value(item, key):
         with dbm.open('general', 'c') as db:
+            if key not in db:
+                return item
             item = str(db[key].decode("utf-8"))
 
         return item
