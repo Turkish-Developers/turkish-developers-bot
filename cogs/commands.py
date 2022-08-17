@@ -211,6 +211,21 @@ class Question(commands.Cog):
         else:
             await ctx.send('Başarısız')
 
+class AIAwake(commands.Cog):
+    def __init__(self, bot):
+        self.bot = bot
+
+    @commands.command()
+    @commands.has_role("Devops")
+    async def talk(self, ctx, *, arg):
+        channel_id, message = arg.split(',')
+        if channel_id.isdigit():
+            channel = self.bot.get_channel(int(channel_id))
+
+            if channel and message:
+                await channel.send(f'{message}')
+
+
 
             
   
@@ -223,3 +238,4 @@ def setup(client):
 	client.add_cog(Streamer(client))
 	client.add_cog(DP(client))
 	client.add_cog(Question(client))
+	client.add_cog(AIAwake(client))

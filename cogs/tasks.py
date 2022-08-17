@@ -124,7 +124,7 @@ class TimerTask(commands.Cog):
                 random_entry_link = random.choice(feed.entries).link
                 if not PdmManager.is_key_in_db(random_entry_link, 'link'):
                     PdmManager.add_sended_key(random_entry_link, 'link')
-                    channel = self.bot.get_channel(self.toda)
+                    channel = self.bot.get_channel(self.today_article_channel_id)
                     allowed_mentions = discord.AllowedMentions(everyone = True)
                     await channel.send(content = f"Günaydın <@&{self.today_article_channel_role}>, Bugünün öneri makalesini sıcak sıcak gönderiyorum. Elleriniz yanmasın aman. Okumanızı tavsiye ederim! {random_entry_link}", allowed_mentions = allowed_mentions)
                     break
