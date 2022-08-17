@@ -216,7 +216,7 @@ class AIAwake(commands.Cog):
         self.bot = bot
 
     @commands.command()
-    @commands.has_role("Devops")
+    @commands.has_role("Admin")
     async def talk(self, ctx, *, arg):
         channel_id, message = arg.split(',')
         if channel_id.isdigit():
