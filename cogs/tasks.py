@@ -11,19 +11,9 @@ from views import QuestionView
 class TimerTask(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
+        self.set_constant_variables()
 
-        self.turkish_developers_id = 643739727849062400
-        self.channel_id = 984467894605848677
-        self.python_channel_id = 996853962919661568
-        self.python_role_id = 772894720790888458
-
-        self.frontend_channel_id = 996825047853432863
-        self.frontend_role_id = 794649516447236096
-
-        self.feed_urls = ['https://medium.com/feed/better-programming',
-        'https://stackoverflow.blog/newsletter/feed/']
-        
-
+        # Tasks Start
         self.ask_people_today.start()
         self.send_reddit_humor.start()
         self.update_status.start()
@@ -31,8 +21,71 @@ class TimerTask(commands.Cog):
         self.ask_to_interested_user.start()
         self.get_random_question.start()
         self.python_article.start()
-        self.css_article.start()
+        self.frontend_article.start()
+        self.backend_article.start()
+        self.uiux_article.start()
+        self.mlai_article.start()
+        # Tasks Start End
 
+
+    def set_constant_variables(self):
+        # Channels & Roles #
+        self.turkish_developers_id = 643739727849062400
+
+        self.today_article_channel_id = 1009504838725419098
+        self.today_article_channel_role = 1009517046087823470 
+
+        
+        self.channel_id = 984467894605848677
+        self.python_channel_id = 1009514826223067146
+        self.python_role_id = 1009513244513271818
+
+        self.frontend_channel_id = 1009514864135393291
+        self.frontend_role_id = 1009513745703260230 
+
+        self.backend_channel_id = 1009514914500595793
+        self.backend_role_id = 1009513835545239692
+
+        self.uiux_channel_id = 1009514978736349225
+        self.uiux_channel_role_id = 1009513882370457700 
+
+        self.mlai_channel_id = 1009515088341897226
+        self.mlai_role_id = 1009514028118310964 
+
+        # Feed Urls #
+
+        self.feed_urls = ['https://medium.com/feed/better-programming',
+        'https://stackoverflow.blog/newsletter/feed/']
+
+        self.frontend_article_urls = [
+            "https://tympanus.net/codrops/feed/",
+            "https://css-tricks.com/feed/",
+            "https://dev.to/feed",
+            "https://1stwebdesigner.com/feed/",
+            "https://addyosmani.com/rss.xml",
+            "https://feeds.feedburner.com/2ality",
+            "https://www.sitepoint.com/sitepoint.rss"
+        ]
+
+        self.backend_article_urls = [
+            "https://blog.alexellis.io/rss/",
+            "https://devblogs.microsoft.com/dotnet/feed/"
+        ]
+
+        self.uiux_article_urls = [
+            'https://uxplanet.org/feed',
+            'https://www.nngroup.com/feed/rss/',
+            'http://feeds.feedburner.com/uxmovement'
+
+        ]
+
+        self.mlai_article_urls = [
+            'https://machinelearningmastery.com/blog/feed/',
+            'https://blog.google/technology/ai/rss/',
+            'https://blog.bigml.com/feed/',
+            'https://news.mit.edu/rss/topic/machine-learning'
+
+        ]
 
         self.questions = [
             "Bugün nasıl geçti? Neler öğrendiniz veya neler yaptınız? Kısaca anlatın yoksa dünyayı ele geçireceğim."
@@ -46,8 +99,18 @@ class TimerTask(commands.Cog):
             "Java ile Javascript aynı şey değil mi? Bu arada",
             "Hayatın anlamı 42. Bu arada"
             "İşten en hızlı nasıl kovulursunuz? 'git push origin master'...",
-            "Üzülme, işsiz kaldıysan en kötü Front-end geliştirici olursun."
+            "Üzülme, işsiz kaldıysan en kötü Front-end geliştirici olursun.",
+            "Akılsız coder'in zahmetini CPU çeker...",
+            "en iyi kod yazılmamış olandır...",
+            "iki kişinin bildiği encryption key sır değildir yeğen.",
+            "söz uçar jira kalır.",
+            "bugünün comment'ini yarına bırakma."
+            "damlaya damlaya memory leak olur.",
+            "denize düşen python'a sarılır."
             ]
+
+
+
 
     @tasks.loop(minutes=60)
     async def send_random_link(self):
@@ -61,9 +124,9 @@ class TimerTask(commands.Cog):
                 random_entry_link = random.choice(feed.entries).link
                 if not PdmManager.is_key_in_db(random_entry_link, 'link'):
                     PdmManager.add_sended_key(random_entry_link, 'link')
-                    channel = self.bot.get_channel(self.channel_id)
+                    channel = self.bot.get_channel(self.toda)
                     allowed_mentions = discord.AllowedMentions(everyone = True)
-                    await channel.send(content = f"Günaydın @everyone! Bugünün öneri makalesini gönderiyorum. Okumanızı tavsiye ederim! {random_entry_link}", allowed_mentions = allowed_mentions)
+                    await channel.send(content = f"Günaydın <@&{self.today_article_channel_role}>, Bugünün öneri makalesini sıcak sıcak gönderiyorum. Elleriniz yanmasın aman. Okumanızı tavsiye ederim! {random_entry_link}", allowed_mentions = allowed_mentions)
                     break
                 else:
                     counter += 1
@@ -142,7 +205,7 @@ class TimerTask(commands.Cog):
         await self.bot.wait_until_ready()
         now_hour = dt.now().hour
         print(now_hour)
-        if now_hour in [15, 18, 20, 22]:
+        if now_hour in [20, 22]:
             users = []
 
             turkish_developers_guild = self.bot.get_guild(self.turkish_developers_id)
@@ -171,7 +234,7 @@ class TimerTask(commands.Cog):
     async def python_article(self):
         await self.bot.wait_until_ready()
         now_hour = dt.now().hour
-        if now_hour == 8:
+        if now_hour == 9:
             article_data = self.send_article(
                 channel_id=self.python_channel_id,
                 rss_link="https://realpython.com/atom.xml",
@@ -185,15 +248,70 @@ class TimerTask(commands.Cog):
                 await channel.send(**article_data.get('data'))
 
     @tasks.loop(minutes=60.0)
-    async def css_article(self):
+    async def frontend_article(self):
         await self.bot.wait_until_ready()
+        import random
         now_hour = dt.now().hour
-        if now_hour == 8:
+        if now_hour == 9:
             article_data = self.send_article(
                 channel_id=self.frontend_channel_id,
-                rss_link="https://css-tricks.com/feed/",
-                store_key='css-article',
+                rss_link=random.choice(self.frontend_article_urls),
+                store_key='frontend-article',
                 role_id=self.frontend_role_id
+            )
+            
+            if article_data:
+                channel = article_data.get('channel')
+                article_data.pop('channel')
+                await channel.send(**article_data.get('data'))
+
+    @tasks.loop(minutes=60.0)
+    async def backend_article(self):
+        await self.bot.wait_until_ready()
+        import random
+        now_hour = dt.now().hour
+        if now_hour == 9:
+            article_data = self.send_article(
+                channel_id=self.backend_channel_id,
+                rss_link=random.choice(self.backend_article_urls),
+                store_key='backend-article',
+                role_id=self.backend_role_id
+            )
+            
+            if article_data:
+                channel = article_data.get('channel')
+                article_data.pop('channel')
+                await channel.send(**article_data.get('data'))
+
+    @tasks.loop(minutes=60.0)
+    async def uiux_article(self):
+        await self.bot.wait_until_ready()
+        import random
+        now_hour = dt.now().hour
+        if now_hour == 9:
+            article_data = self.send_article(
+                channel_id=self.uiux_channel_id,
+                rss_link=random.choice(self.uiux_article_urls),
+                store_key='uiux-article',
+                role_id=self.uiux_channel_role_id
+            )
+            
+            if article_data:
+                channel = article_data.get('channel')
+                article_data.pop('channel')
+                await channel.send(**article_data.get('data'))
+
+    @tasks.loop(minutes=60.0)
+    async def mlai_article(self):
+        await self.bot.wait_until_ready()
+        import random
+        now_hour = dt.now().hour
+        if now_hour == 9:
+            article_data = self.send_article(
+                channel_id=self.mlai_channel_id,
+                rss_link=random.choice(self.mlai_article_urls),
+                store_key='mlai-article',
+                role_id=self.mlai_role_id
             )
             
             if article_data:
@@ -217,7 +335,7 @@ class TimerTask(commands.Cog):
             if PdmManager.get_key_value(link, store_key) == link:
                 return False
 
-        return {"channel": channel, "data": {"content": f"Merhaba <@&{role_id}>, size yeni çıkan bir makale öneriyorum: {link}", "allowed_mentions": allowed_mentions}}
+        return {"channel": channel, "data": {"content": f"Değerli <@&{role_id}> abonelerimiz, istediğiniz günlük içerik burada: {link}", "allowed_mentions": allowed_mentions}}
 
 
     def embed_message(self, title, description):
