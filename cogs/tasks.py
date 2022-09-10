@@ -39,7 +39,7 @@ class TimerTask(commands.Cog):
 
         
         self.channel_id = 984467894605848677
-        self.bump_channel_id = 857719156022444063
+        self.bump_channel_id = 1002286761189314590
         
         self.python_channel_id = 1009514826223067146
         self.python_role_id = 1009513244513271818
