@@ -155,9 +155,10 @@ class DP(commands.Cog):
         description="""
         --**GENEL**--
 
-        **!tdb mydp** - Toplam ne kadar DP puanınız olduğunu öğrenebilirsiniz
-        **!tdb dp @discorduser** - Başka bir kullanıcının toplam DP puanını öğrenebilirsiniz
-        **!tdb showdpall **- DP Puanlarının liderlik tablosunu görebilirsiniz
+        **!tdb mydp** - Toplam ne kadar DP puanınız olduğunu öğrenebilirsiniz.
+        **!tdb dp @discorduser** - Başka bir kullanıcının toplam DP puanını öğrenebilirsiniz.
+        **!tdb mounthlydp - DP Puanlarının aylık liderlik tablosunu görebilirsiniz.
+        **!tdb showdpall **- DP Puanlarının liderlik tablosunu görebilirsiniz.
         **!tdb thanks @discorduser** - Kullanıcıya DP puanı kazandırırsınız.
 
         --**YAYINCI**--
