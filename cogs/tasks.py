@@ -18,7 +18,6 @@ class TimerTask(commands.Cog):
         self.send_reddit_humor.start()
         self.update_status.start()
         self.anounce_mounthly_dp_winner.start()
-        self.send_bump.start()
         self.send_random_link.start()
         self.ask_to_interested_user.start()
         self.get_random_question.start()
@@ -260,12 +259,6 @@ class TimerTask(commands.Cog):
             PdmManager.clear_key_in_db('interested_users')
             PdmManager.clear_key_in_db('streamed_users')
             PdmManager.clear_key_in_db('suggested_users')
-
-    @tasks.loop(hours=3)
-    async def send_bump(self):
-        await self.bot.wait_until_ready()
-        channel = self.bot.get_channel(self.bump_channel_id)
-        await channel.send('/bump')
 
 
     @tasks.loop(minutes=60.0)
