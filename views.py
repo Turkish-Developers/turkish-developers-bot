@@ -3,6 +3,7 @@ from serializers import QuestionSerializer
 db.connect()
 db.create_tables([User])
 db.create_tables([Question])
+db.create_tables([DPLogger])
 
 class UserView:
     def __init__(self, discord_id):
@@ -29,11 +30,16 @@ class UserView:
             other_user = self.create_user_if_not_exists(other_user_discord_id)
             other_user.dp_point += 1
             other_user.save()
+            self.create_dp_log(other_user)
             self.user.is_gave_dp = True
             self.user.save()
             return True, UserView(other_user_discord_id)
         else:
             return False, ''
+
+    def create_dp_log(self, user):
+        DPLogger.create(user=user)
+
 
     @staticmethod
     def restore_all_gave_dp():
@@ -117,4 +123,28 @@ class QuestionView:
             return False
             
 
+class DPLoggerView:
+    def __init__(self) -> None:
+        self.monthly_leaderboard = self._get_month_user_dp_leaderboard()
+
+    def _get_month_user_dp_leaderboard(self, mounth=0):
+        import datetime
+        now_month = datetime.datetime.now().month
+        if not mounth:
+            mounth = now_month
         
+        users = []
+
+
+        queryset = DPLogger.select(DPLogger.user, fn.Count(DPLogger.user).alias('count')).where(DPLogger.created_date.month == mounth).group_by(DPLogger.user).limit(10).order_by(fn.COUNT(DPLogger.user).desc())
+
+        for log in queryset:
+            users.append({'user_id': log.user.discord_id, 'dp_point': log.count})
+
+        return users
+
+    def get_mounthly_winners(self):
+        import datetime
+        now_month = datetime.datetime.now().month
+        return self._get_month_user_dp_leaderboard(mounth=9)[:2]
+

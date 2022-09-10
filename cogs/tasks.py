@@ -5,7 +5,7 @@ import feedparser
 import discord
 from store import PdmManager
 from tools import Article, Reddit
-from views import QuestionView
+from views import QuestionView, DPLoggerView
 
 
 class TimerTask(commands.Cog):
@@ -17,6 +17,8 @@ class TimerTask(commands.Cog):
         self.ask_people_today.start()
         self.send_reddit_humor.start()
         self.update_status.start()
+        self.anounce_mounthly_dp_winner.start()
+        self.send_bump.start()
         self.send_random_link.start()
         self.ask_to_interested_user.start()
         self.get_random_question.start()
@@ -37,6 +39,8 @@ class TimerTask(commands.Cog):
 
         
         self.channel_id = 984467894605848677
+        self.bump_channel_id = 857719156022444063
+        
         self.python_channel_id = 1009514826223067146
         self.python_role_id = 1009513244513271818
 
@@ -133,6 +137,34 @@ class TimerTask(commands.Cog):
 
                 if counter >= 5:
                     break      
+    
+    @tasks.loop(hours=1)
+    async def anounce_mounthly_dp_winner(self):
+        await self.bot.wait_until_ready()
+        now_day = dt.now().day
+        now_hour = dt.now().hour
+        allowed_mentions = discord.AllowedMentions(everyone = True)
+
+        if now_day == 1 and now_hour == 0:
+            winners = self.get_monthly_winners()
+        else:
+            return
+        
+        channel = self.bot.get_channel(self.channel_id)
+
+        description = ''
+        count = 1
+        print(winners)
+        for user in winners:
+            name = self.bot.get_user(user.get('user_id')).display_name
+            point = user.get('dp_point')
+            description += f"**{count}.** {name} {point}DP\n"
+            count += 1
+
+        embed = discord.Embed(title = "Aylık Kazananlar!", description=description, color = 3553599)
+        await channel.send(content = f"✨ Aylık DP kazananları sonuçlandı @everyone! ✨ Ödülünüz için Adminlere ulaşın 😊", embed=embed, allowed_mentions = allowed_mentions)
+
+
 
     @tasks.loop(seconds=5)
     async def update_status(self):
@@ -228,6 +260,12 @@ class TimerTask(commands.Cog):
             PdmManager.clear_key_in_db('interested_users')
             PdmManager.clear_key_in_db('streamed_users')
             PdmManager.clear_key_in_db('suggested_users')
+
+    @tasks.loop(hours=3)
+    async def send_bump(self):
+        await self.bot.wait_until_ready()
+        channel = self.bot.get_channel(self.bump_channel_id)
+        await channel.send('/bump')
 
 
     @tasks.loop(minutes=60.0)
@@ -340,6 +378,10 @@ class TimerTask(commands.Cog):
 
     def embed_message(self, title, description):
         return discord.Embed(title=f"{title}", description=f"{description}", color=discord.Color.green())
+
+    def get_monthly_winners(self):
+        logger = DPLoggerView()
+        return logger.get_mounthly_winners()
 
         
     

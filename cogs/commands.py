@@ -186,7 +186,21 @@ class DP(commands.Cog):
         print(description)
         embed = discord.Embed(title = "👑 DP(Developer Point) Sıralaması", description=description, color = 3553599)
         await ctx.send(embed=embed)
-        
+
+    @commands.command()
+    async def mounthlydp(self, ctx):
+        users = self.get_announcement_monthly_winner_list() # [{user_id: 0000, dp_point:0 }]
+        description = ''
+        count = 1
+        for user in users:
+            name = self.bot.get_user(user.get('user_id')).display_name
+            point = user.get('dp_point')
+            description += f"**{count}.** {name} {point}DP\n"
+            count += 1
+
+        embed = discord.Embed(title = "📅 Aylık DP Sıralaması", description=description, color = 3553599)
+        embed.set_footer(text="Her ayın ilk gününde 00:00'da aylık sıralama sıfırlanır. İlk iki kişiye istediği udemy kursu hediye edilir 😊")
+        await ctx.send(embed=embed)
 
     
     @tasks.loop(minutes=60)
@@ -196,6 +210,11 @@ class DP(commands.Cog):
         now_hour = datetime.now().hour
         if now_hour == 9:
             UserView.restore_all_gave_dp()
+
+    def get_announcement_monthly_winner_list(self):
+        logger = DPLoggerView()
+        return logger.monthly_leaderboard
+
 
 class Question(commands.Cog):
     def __init__(self, bot):
