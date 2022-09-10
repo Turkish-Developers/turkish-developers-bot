@@ -157,7 +157,7 @@ class DP(commands.Cog):
 
         **!tdb mydp** - Toplam ne kadar DP puanınız olduğunu öğrenebilirsiniz.
         **!tdb dp @discorduser** - Başka bir kullanıcının toplam DP puanını öğrenebilirsiniz.
-        **!tdb mounthlydp - DP Puanlarının aylık liderlik tablosunu görebilirsiniz.
+        **!tdb mounthlydp** - DP Puanlarının aylık liderlik tablosunu görebilirsiniz.
         **!tdb showdpall **- DP Puanlarının liderlik tablosunu görebilirsiniz.
         **!tdb thanks @discorduser** - Kullanıcıya DP puanı kazandırırsınız.
 
@@ -189,7 +189,7 @@ class DP(commands.Cog):
         await ctx.send(embed=embed)
 
     @commands.command()
-    async def mounthlydp(self, ctx):
+    async def monthlydp(self, ctx):
         users = self.get_announcement_monthly_winner_list() # [{user_id: 0000, dp_point:0 }]
         description = ''
         count = 1
