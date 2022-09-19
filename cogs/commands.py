@@ -194,7 +194,8 @@ class DP(commands.Cog):
         description = ''
         count = 1
         for user in users:
-            name = self.bot.get_user(user.get('user_id')).display_name
+            discord_user = await self.bot.fetch_user(user.get('user_id'))
+            name = discord_user.display_name
             point = user.get('dp_point')
             description += f"**{count}.** {name} {point}DP\n"
             count += 1
