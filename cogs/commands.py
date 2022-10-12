@@ -119,6 +119,14 @@ class DP(commands.Cog):
 
 
 
+    @commands.command()
+    async def dailydp(self, ctx):
+        user = UserView(ctx.message.author.id)
+        is_success = user.get_daily_dp_point()
+        if is_success:
+            await ctx.send(f"{ctx.message.author.mention} kullanıcısı günlük DP'sini almayı unutmadı 😎 **teşekkür etti **👏! {ctx.message.author.mention} artık **{user.get_user_developer_point()}** DP(Developer Point) sahibi! 😎")
+        else:
+            await ctx.send(f"{ctx.message.author.mention}, maalesef günlük DP kazanma hakkın dolmuş 😐 Her gün 1 günlük dp hakkı kazanabildiğini unutma 🤚 Bu hak 23:00'da yenilenir.")
 
     @commands.command()
     async def thanks(self, ctx, dc_user:discord.Member):
@@ -160,6 +168,7 @@ class DP(commands.Cog):
         **!tdb monthlydp** - DP Puanlarının aylık liderlik tablosunu görebilirsiniz.
         **!tdb showdpall **- DP Puanlarının liderlik tablosunu görebilirsiniz.
         **!tdb thanks @discorduser** - Kullanıcıya DP puanı kazandırırsınız.
+        **!tdb dailydp** - Her gün burada olduğunuzu teyit ederek DP puanı kazanabilirsiniz.
 
         --**YAYINCI**--
 
@@ -254,9 +263,9 @@ class AIAwake(commands.Cog):
 
 
 
-def setup(client):
-	client.add_cog(Poll(client))
-	client.add_cog(Streamer(client))
-	client.add_cog(DP(client))
-	client.add_cog(Question(client))
-	client.add_cog(AIAwake(client))
+async def setup(client):
+	await client.add_cog(Poll(client))
+	await client.add_cog(Streamer(client))
+	await client.add_cog(DP(client))
+	await client.add_cog(Question(client))
+	await client.add_cog(AIAwake(client))

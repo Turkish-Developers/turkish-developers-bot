@@ -229,7 +229,7 @@ class TimerTask(commands.Cog):
         if now_hour == 21:
             channel = self.bot.get_channel(self.channel_id)
             allowed_mentions = discord.AllowedMentions(everyone = True)
-            await channel.send(content = f"selam @everyone! {random.choice(self.humor)} {random.choice(self.questions)}", allowed_mentions = allowed_mentions)
+            await channel.send(content = f"selam @here! {random.choice(self.humor)} {random.choice(self.questions)}", allowed_mentions = allowed_mentions)
 
     @tasks.loop(minutes=60)
     async def ask_to_interested_user(self):
@@ -259,6 +259,7 @@ class TimerTask(commands.Cog):
             PdmManager.clear_key_in_db('interested_users')
             PdmManager.clear_key_in_db('streamed_users')
             PdmManager.clear_key_in_db('suggested_users')
+            PdmManager.clear_key_in_db('dailydp')
 
 
     @tasks.loop(minutes=60.0)
@@ -379,5 +380,5 @@ class TimerTask(commands.Cog):
         
     
     
-def setup(client):
-	client.add_cog(TimerTask(client))
+async def setup(client):
+	await client.add_cog(TimerTask(client))

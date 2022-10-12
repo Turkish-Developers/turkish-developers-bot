@@ -50,6 +50,6 @@ class Suggestions(commands.Cog):
         
 
     
-def setup(client):
-	client.add_cog(Greetings(client))
-	client.add_cog(Suggestions(client))
+async def setup(client):
+	await client.add_cog(Greetings(client))
+	await client.add_cog(Suggestions(client))

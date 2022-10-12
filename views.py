@@ -40,6 +40,16 @@ class UserView:
     def create_dp_log(self, user):
         DPLogger.create(user=user)
 
+    def get_daily_dp_point(self) -> bool:
+        from store import PdmManager
+        if not PdmManager.is_key_in_db(str(self.user.discord_id), 'dailydp'):
+            PdmManager.add_sended_key(str(self.user.discord_id), 'dailydp')
+            self.user.dp_point += 1
+            self.user.save()
+            return True
+        else:
+            return False
+
 
     @staticmethod
     def restore_all_gave_dp():
