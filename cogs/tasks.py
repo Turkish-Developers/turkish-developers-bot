@@ -14,7 +14,7 @@ class TimerTask(commands.Cog):
         self.set_constant_variables()
 
         # Tasks Start
-        self.ask_people_today.start()
+        self.send_dolar_try.start()
         self.send_reddit_humor.start()
         self.update_status.start()
         self.anounce_mounthly_dp_winner.start()
@@ -223,13 +223,15 @@ class TimerTask(commands.Cog):
 
     
     @tasks.loop(minutes=60.0)
-    async def ask_people_today(self):
+    async def send_dolar_try(self):
         await self.bot.wait_until_ready()
         now_hour = dt.now().hour
         if now_hour == 21:
+            from forex_python.converter import CurrencyRates
+            c = CurrencyRates()
+            turkish_lira = c.get_rate('USD', 'TRY')
             channel = self.bot.get_channel(self.channel_id)
-            allowed_mentions = discord.AllowedMentions(everyone = True)
-            await channel.send(content = f"selam @here! {random.choice(self.humor)} {random.choice(self.questions)}", allowed_mentions = allowed_mentions)
+            await channel.send(content = f"1 USD = {turkish_lira} TRY! 🤡")
 
     @tasks.loop(minutes=60)
     async def ask_to_interested_user(self):
