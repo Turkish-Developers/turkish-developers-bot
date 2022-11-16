@@ -15,6 +15,7 @@ class TimerTask(commands.Cog):
 
         # Tasks Start
         self.send_dolar_try.start()
+        self.annotate_question.start()
         self.send_reddit_humor.start()
         self.update_status.start()
         self.anounce_mounthly_dp_winner.start()
@@ -54,6 +55,8 @@ class TimerTask(commands.Cog):
 
         self.mlai_channel_id = 1009515088341897226
         self.mlai_role_id = 1009514028118310964 
+
+        self.question_chanel_id = 984467960259280896
 
         # Feed Urls #
 
@@ -232,6 +235,14 @@ class TimerTask(commands.Cog):
             turkish_lira = c.get_rate('USD', 'TRY')
             channel = self.bot.get_channel(self.channel_id)
             await channel.send(content = f"1 USD = {turkish_lira} TRY! 🤡")
+
+    
+    @tasks.loop(hours=4)
+    async def annotate_question(self):
+        await self.bot.wait_until_ready()
+        channel = self.bot.get_channel(self.question_chanel_id)
+        await channel.send(f"⚠️ Sorulan sorulara daha hızlı cevap verebilmemiz için **@yardım** etiketlerini kullanmayı unutmayın!. **@yardım** etiketi kullanılmayan sorular silinebilir. ⚠️",)
+
 
     @tasks.loop(minutes=60)
     async def ask_to_interested_user(self):

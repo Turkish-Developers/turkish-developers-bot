@@ -67,15 +67,6 @@ class Suggestions(commands.Cog):
             else:
                 await message.author.send('Önerilerin için teşekkür ederiz. Her gün 1 kere öneri verebilirsin 😊')
 
-        if (message.channel.id == self.question_channel_id): 
-            for question_role_id in self.question_role_id_list:
-                if f"<@&{question_role_id}>" in message.content:
-                    return
-
-            
-            await message.channel.send(f"Hey {message.author.mention}, soru sorman harika! Fakat soruna daha hızlı cevap verebilmemiz için **@yardım** etiketlerini kullanman gerek. Sorduğun soruyu, ilişkili olan etiket veya etiketleri kullanarak sorabilir misin?",)
-        
-
     
 async def setup(client):
 	await client.add_cog(Greetings(client))
